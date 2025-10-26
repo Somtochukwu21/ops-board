@@ -18,11 +18,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased`}>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  )
+		<html lang="en">
+			<body className={`font-sans antialiased`} cz-shortcut-listen="true">
+				{children}
+				<Analytics />
+			</body>
+		</html>
+	);
 }
