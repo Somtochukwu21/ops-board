@@ -1,30 +1,32 @@
-"use client"
+"use client";
 
-import type { IProduct } from "@/hooks/use-products"
-import { useProducts } from "@/hooks/use-products"
-import { Button } from "@/components/ui/button"
-import { Trash2, Edit2, CheckCircle2 } from "lucide-react"
-import { useState } from "react"
-import { EditModal } from "./edit-modal"
+import type { IProduct } from "@/hooks/use-products";
+import { useProducts } from "@/hooks/use-products";
+import { Button } from "@/components/ui/button";
+import { Trash2, Edit2, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { EditModal } from "./edit-modal";
 
 const statusColors = {
-  pending: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
-  delivered: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+  pending:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+  delivered:
+    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
   returned: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400",
   failed: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400",
-}
+};
 
 export function ProductCard({ product }: { product: IProduct }) {
-  const { deleteProduct, updateProduct, markAsSold } = useProducts()
-  const [showEdit, setShowEdit] = useState(false)
+  const { deleteProduct, updateProduct, markAsSold } = useProducts();
+  const [showEdit, setShowEdit] = useState(false);
 
   const createdDate = new Date(product.createdAt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
-  })
+  });
 
-  const profit = product.price - product.purchasePrice
+  const profit = product.price - product.purchasePrice;
 
   return (
     <>
@@ -34,15 +36,21 @@ export function ProductCard({ product }: { product: IProduct }) {
             <h3 className="font-semibold text-foreground">{product.name}</h3>
             <p className="text-sm text-muted-foreground">{createdDate}</p>
           </div>
-          <span className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[product.status]}`}>
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[product.status]}`}
+          >
             {product.status}
           </span>
         </div>
 
         <div className="mb-4 space-y-2">
           <div className="flex justify-between">
-            <span className="text-sm text-muted-foreground">Purchase Price</span>
-            <span className="font-semibold">${product.purchasePrice.toFixed(2)}</span>
+            <span className="text-sm text-muted-foreground">
+              Purchase Price
+            </span>
+            <span className="font-semibold">
+              ${product.purchasePrice.toFixed(2)}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Selling Price</span>
@@ -65,16 +73,31 @@ export function ProductCard({ product }: { product: IProduct }) {
         </div>
 
         <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => setShowEdit(true)} className="flex-1">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowEdit(true)}
+            className="flex-1"
+          >
             <Edit2 className="h-4 w-4" />
             Edit
           </Button>
-          <Button variant="outline" size="sm" onClick={() => deleteProduct(product.id)} className="flex-1">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => deleteProduct(product.id)}
+            className="flex-1"
+          >
             <Trash2 className="h-4 w-4" />
             Delete
           </Button>
           {(product.status === "failed" || product.status === "returned") && (
-            <Button variant="outline" size="sm" onClick={() => markAsSold(product.id)} className="flex-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => markAsSold(product.id)}
+              className="flex-1"
+            >
               <CheckCircle2 className="h-4 w-4" />
               Sold
             </Button>
@@ -87,10 +110,10 @@ export function ProductCard({ product }: { product: IProduct }) {
         onClose={() => setShowEdit(false)}
         product={product}
         onSave={(updatedData) => {
-          updateProduct(product.id, updatedData)
-          setShowEdit(false)
+          updateProduct(product.id, updatedData);
+          setShowEdit(false);
         }}
       />
     </>
-  )
+  );
 }

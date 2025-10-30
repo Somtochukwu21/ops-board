@@ -1,30 +1,37 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import type { IProduct } from "@/hooks/use-products"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useState } from "react";
+import type { IProduct } from "@/hooks/use-products";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface EditModalProps {
-  isOpen: boolean
-  onClose: () => void
-  product: IProduct
-  onSave: (data: Partial<IProduct>) => void
+  isOpen: boolean;
+  onClose: () => void;
+  product: IProduct;
+  onSave: (data: Partial<IProduct>) => void;
 }
 
-export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) {
+export function EditModal({
+  isOpen,
+  onClose,
+  product,
+  onSave,
+}: EditModalProps) {
   const [formData, setFormData] = useState({
     name: product.name,
     price: product.price,
     purchasePrice: product.purchasePrice,
     status: product.status,
     quantity: product.quantity || "",
-  })
+  });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -33,21 +40,21 @@ export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) 
             ? Number.parseFloat(value)
             : ""
           : value,
-    }))
-  }
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     onSave({
       name: formData.name,
       price: formData.price as number,
       purchasePrice: formData.purchasePrice as number,
       status: formData.status as IProduct["status"],
       quantity: formData.quantity ? (formData.quantity as number) : undefined,
-    })
-  }
+    });
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -56,12 +63,22 @@ export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) 
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Product Name</label>
-            <Input type="text" name="name" value={formData.name} onChange={handleChange} className="w-full" />
+            <label className="block text-sm font-medium mb-1">
+              Product Name
+            </label>
+            <Input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Purchase Price</label>
+            <label className="block text-sm font-medium mb-1">
+              Purchase Price
+            </label>
             <Input
               type="number"
               name="purchasePrice"
@@ -73,7 +90,9 @@ export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) 
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Selling Price</label>
+            <label className="block text-sm font-medium mb-1">
+              Selling Price
+            </label>
             <Input
               type="number"
               name="price"
@@ -86,7 +105,13 @@ export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) 
 
           <div>
             <label className="block text-sm font-medium mb-1">Quantity</label>
-            <Input type="number" name="quantity" value={formData.quantity} onChange={handleChange} className="w-full" />
+            <Input
+              type="number"
+              name="quantity"
+              value={formData.quantity}
+              onChange={handleChange}
+              className="w-full"
+            />
           </div>
 
           <div>
@@ -105,7 +130,12 @@ export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) 
           </div>
 
           <div className="flex gap-3">
-            <Button type="button" variant="outline" onClick={onClose} className="flex-1 bg-transparent">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              className="flex-1 bg-transparent"
+            >
               Cancel
             </Button>
             <Button type="submit" className="flex-1">
@@ -115,5 +145,5 @@ export function EditModal({ isOpen, onClose, product, onSave }: EditModalProps) 
         </form>
       </div>
     </div>
-  )
+  );
 }

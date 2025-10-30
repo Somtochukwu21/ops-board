@@ -1,24 +1,26 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useProducts } from "@/hooks/use-products"
-import { ProductCard } from "./product-card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { useState } from "react";
+import { useProducts } from "@/hooks/use-products";
+import { ProductCard } from "./product-card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 export function ProductList() {
-  const { products } = useProducts()
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState<string | null>(null)
+  const { products } = useProducts();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string | null>(null);
 
   const filteredProducts = products.filter((product) => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesFilter = !filterStatus || product.status === filterStatus
-    return matchesSearch && matchesFilter
-  })
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesFilter = !filterStatus || product.status === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
 
-  const statuses = ["pending", "delivered", "returned", "failed"] as const
+  const statuses = ["pending", "delivered", "returned", "failed"] as const;
 
   return (
     <div className="space-y-6">
@@ -70,5 +72,5 @@ export function ProductList() {
         </div>
       )}
     </div>
-  )
+  );
 }
