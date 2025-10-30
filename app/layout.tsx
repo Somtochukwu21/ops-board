@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
 		<html lang="en">
-			<body className={`font-sans antialiased`} cz-shortcut-listen="true">
+			<body className={`font-sans antialiased`}>
 				{children}
 				<Analytics />
 			</body>

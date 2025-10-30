@@ -1,118 +1,139 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
-import { ProductForm } from "@/components/product-form"
-import { ProductList } from "@/components/product-list"
-import { StatsBar } from "@/components/stats-bar"
-import { useProducts } from "@/hooks/use-products"
-import { Moon, Sun, LogOut } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { supabase } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { ProductForm } from "@/components/product-form";
+import { ProductList } from "@/components/product-list";
+import { StatsBar } from "@/components/stats-bar";
+import { Button } from "@/components/ui/button";
+import { useProducts } from "@/hooks/use-products";
+import { LogOut, Moon, Sun } from "lucide-react";
+import { toast } from "sonner";
 
 export default function Home() {
-  const router = useRouter()
-  const [isDark, setIsDark] = useState(false)
-  const [mounted, setMounted] = useState(false)
-  const [user, setUser] = useState<any>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const { products } = useProducts()
+	const router = useRouter();
+	const [isDark, setIsDark] = useState(false);
+	const [mounted, setMounted] = useState(false);
+	const [user, setUser] = useState<any>(null);
+	const { products } = useProducts();
 
-  useEffect(() => {
-    setMounted(true)
-    const isDarkMode = localStorage.getItem("theme") === "dark"
-    setIsDark(isDarkMode)
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark")
-    }
+	// ✅ Load theme and auth state once
+	useEffect(() => {
+		const initialize = async () => {
+			setMounted(true);
 
-    const checkAuth = async () => {
-      const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+			// Theme
+			const savedTheme = localStorage.getItem("theme");
+			const isDarkMode = savedTheme === "dark";
+			setIsDark(isDarkMode);
+			document.documentElement.classList.toggle("dark", isDarkMode);
 
-      if (!user) {
-        router.push("/auth/login")
-      } else {
-        setUser(user)
-      }
-      setIsLoading(false)
-    }
+			// Auth check (only once)
+			const {
+				data: { user },
+			} = await supabase.auth.getUser();
 
-    checkAuth()
-  }, [router])
+			if (!user) {
+				router.replace("/auth/login");
+				return;
+			}
 
-  const toggleTheme = () => {
-    const newIsDark = !isDark
-    setIsDark(newIsDark)
-    if (newIsDark) {
-      document.documentElement.classList.add("dark")
-      localStorage.setItem("theme", "dark")
-    } else {
-      document.documentElement.classList.remove("dark")
-      localStorage.setItem("theme", "light")
-    }
-  }
+			setUser(user);
+		};
 
-  const handleLogout = async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push("/auth/login")
-  }
+		initialize();
 
-  if (!mounted || isLoading || !user) return null
+		// ✅ Subscribe to auth state changes (for logout or token refresh)
+		const { data: listener } = supabase.auth.onAuthStateChange(
+			(_event, session) => {
+				if (!session?.user) {
+					router.replace("/auth/login");
+				} else {
+					setUser(session.user);
+				}
+			}
+		);
 
-  return (
-    <main className="min-h-screen bg-background text-foreground transition-colors duration-200">
-      {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Product Tracker</h1>
-              <p className="mt-1 text-sm text-muted-foreground">Welcome, {user.email}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={toggleTheme}
-                className="rounded-lg border border-border bg-card p-2 hover:bg-muted transition-colors"
-                aria-label="Toggle theme"
-              >
-                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-              </button>
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2 bg-transparent"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+		return () => {
+			listener.subscription.unsubscribe();
+		};
+	}, [router]);
 
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Stats */}
-        <StatsBar products={products} />
+	const toggleTheme = () => {
+		const newIsDark = !isDark;
+		setIsDark(newIsDark);
+		localStorage.setItem("theme", newIsDark ? "dark" : "light");
+		document.documentElement.classList.toggle("dark", newIsDark);
+	};
 
-        {/* Main Grid */}
-        <div className="mt-8 grid gap-8 lg:grid-cols-3">
-          {/* Form */}
-          <div className="lg:col-span-1">
-            <ProductForm />
-          </div>
+	const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Logout successful!");
+		router.replace("/auth/login");
+	};
 
-          {/* Products List */}
-          <div className="lg:col-span-2">
-            <ProductList />
-          </div>
-        </div>
-      </div>
-    </main>
-  )
+	if (!mounted) return null;
+	if (!user)
+		return (
+			<div className="flex h-screen items-center justify-center">
+				<p className="text-muted-foreground">Checking authentication...</p>
+			</div>
+		);
+
+	return (
+		<main className="min-h-screen bg-background text-foreground transition-colors duration-200">
+			{/* Header */}
+			<header className="border-b border-border bg-card">
+				<div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+					<div className="flex items-center justify-between">
+						<div>
+							<h1 className="text-3xl font-bold tracking-tight">
+								Product Tracker
+							</h1>
+							<p className="mt-1 text-sm text-muted-foreground">
+								Welcome, {user.email}
+							</p>
+						</div>
+						<div className="flex items-center gap-2">
+							<button
+								onClick={toggleTheme}
+								className="rounded-lg border border-border bg-card p-2 hover:bg-muted transition-colors"
+								aria-label="Toggle theme">
+								{isDark ? (
+									<Sun className="h-5 w-5" />
+								) : (
+									<Moon className="h-5 w-5" />
+								)}
+							</button>
+							<Button
+								onClick={handleLogout}
+								variant="outline"
+								size="sm"
+								className="flex items-center gap-2 bg-transparent">
+								<LogOut className="h-4 w-4" />
+								Logout
+							</Button>
+						</div>
+					</div>
+				</div>
+			</header>
+
+			{/* Content */}
+			<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+				<StatsBar products={products} />
+
+				<div className="mt-8 grid gap-8 lg:grid-cols-3">
+					<div className="lg:col-span-1">
+						<ProductForm />
+					</div>
+
+					<div className="lg:col-span-2">
+						<ProductList />
+					</div>
+				</div>
+			</div>
+		</main>
+	);
 }
