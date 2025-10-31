@@ -7,7 +7,7 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "OpsBoard",
+  title: "OpsFlow",
   description:
     "Track every sale, return, and stock movement from one smart dashboard. Flow-based analytics that give you real-time visibility into your product lifecycle and business performance.",
 };
