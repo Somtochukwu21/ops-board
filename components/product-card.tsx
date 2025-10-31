@@ -37,7 +37,9 @@ export function ProductCard({ product }: { product: IProduct }) {
             <p className="text-sm text-muted-foreground">{createdDate}</p>
           </div>
           <span
-            className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[product.status]}`}
+            className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+              statusColors[product.status]
+            }`}
           >
             {product.status}
           </span>
@@ -49,19 +51,37 @@ export function ProductCard({ product }: { product: IProduct }) {
               Purchase Price
             </span>
             <span className="font-semibold">
-              ${product.purchasePrice.toFixed(2)}
+              ₦{" "}
+              {product.purchasePrice.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Selling Price</span>
-            <span className="font-semibold">${product.price.toFixed(2)}</span>
+            <span className="font-semibold">
+              ₦
+              {product.price.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-sm text-muted-foreground">Profit</span>
             <span
-              className={`font-semibold ${profit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+              className={`font-semibold ${
+                profit >= 0
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
+              }`}
             >
-              ${profit.toFixed(2)}
+              ₦
+              {profit.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </span>
           </div>
           {product.quantity && (

@@ -48,7 +48,11 @@ export function StatsBar({ products }: { products: IProduct[] }) {
       <div className="rounded-lg border border-border bg-card p-4 shadow-[0_10px_50px_rgba(0,0,0,0.1)]">
         <p className="text-sm text-muted-foreground">Total Spent</p>
         <p className="mt-2 text-2xl font-bold">
-          ${stats.totalSpent.toFixed(2)}
+          ₦
+          {stats.totalSpent.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </p>
       </div>
     </div>
