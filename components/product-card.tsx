@@ -102,7 +102,7 @@ export function ProductCard({ product }: { product: IProduct }) {
             <Edit2 className="h-4 w-4" />
             Edit
           </Button>
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
             onClick={() => deleteProduct(product.id)}
@@ -110,7 +110,7 @@ export function ProductCard({ product }: { product: IProduct }) {
           >
             <Trash2 className="h-4 w-4" />
             Delete
-          </Button>
+          </Button> */}
           {(product.status === "failed" || product.status === "returned") && (
             <Button
               variant="outline"
